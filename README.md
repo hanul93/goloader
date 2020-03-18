@@ -1,11 +1,9 @@
 
-# Goloader
-
-[![Build Status](https://travis-ci.org/pkujhd/goloader.svg?branch=master)](https://travis-ci.org/pkujhd/goloader)
+# Goloader for object Buffer
 
 Goloader can load and run Golang code at runtime.
 
-Forked from **dearplain/goloader**, Take over maintenance because the original author is not in maintenance
+Forked from **pkujhd/goloader**, Take over maintenance because the original author is not in maintenance
 
 ## How does it work?
 
@@ -33,19 +31,19 @@ cp -r $GOROOT/src/cmd/internal $GOROOT/src/cmd/objfile
 ## Examples
 
 ```
-go build github.com/pkujhd/goloader/examples/loader
+go build github.com/hanul93/goloader/examples/loader
 
-go tool compile $GOPATH/src/github.com/pkujhd/goloader/examples/schedule/schedule.go
+go tool compile $GOPATH/src/github.com/hanul93/goloader/examples/schedule/schedule.go
 ./loader -o schedule.o -run main.main -times 10
 
-go tool compile $GOPATH/src/github.com/pkujhd/goloader/examples/base/base.go
+go tool compile $GOPATH/src/github.com/hanul93/goloader/examples/base/base.go
 ./loader -o base.o -run main.main
 
-go tool compile $GOPATH/src/github.com/pkujhd/goloader/examples/http/http.go
+go tool compile $GOPATH/src/github.com/hanul93/goloader/examples/http/http.go
 ./loader -o http.o -run main.main
 
-go install github.com/pkujhd/goloader/examples/basecontext
-./loader -o $GOPATH/pkg/`go env GOOS`_`go env GOARCH`/github.com/pkujhd/goloader/examples/basecontext.a:github.com/pkujhd/goloader/examples/basecontext -o inter.o
+go install github.com/hanul93/goloader/examples/basecontext
+./loader -o $GOPATH/pkg/`go env GOOS`_`go env GOARCH`/github.com/hanul93/goloader/examples/basecontext.a:github.com/pkujhd/goloader/examples/basecontext -o inter.o
 
 #build multiple go files
 go tool compile -I $GOPATH/pkg/darwin_amd64 -o test.o test1.go test2.go

@@ -1,9 +1,10 @@
 package main
 
 import (
-	"cmd/objfile/goobj"
+	"bytes"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"runtime"
@@ -12,8 +13,9 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/hanul93/goloader"
+	"github.com/hanul93/goloader/goobj"
 	"github.com/kr/pretty"
-	"github.com/pkujhd/goloader"
 )
 
 type arrayFlags struct {
@@ -117,16 +119,23 @@ func parse(file, pkgpath *string) {
 		return
 	}
 
-	f, err := os.Open(*file)
+	// f, err := os.Open(*file)
+	data, err := ioutil.ReadFile(*file)
 	if err != nil {
 		fmt.Printf("%# v\n", err)
 		return
 	}
+
+	f := bytes.NewReader(data)
+
 	obj, err := goobj.Parse(f, *pkgpath)
 	pretty.Printf("%# v\n", obj)
+
+	/*
 	f.Close()
 	if err != nil {
 		fmt.Printf("error reading %s: %v\n", *file, err)
 		return
 	}
+	*/
 }

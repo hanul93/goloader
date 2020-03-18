@@ -7,7 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
+	"io/ioutil"
+	_ "os"
 	"runtime"
 	"strconv"
 	"strings"
@@ -109,7 +110,7 @@ type itabSym struct {
 
 type objSym struct {
 	sym  *goobj.Sym
-	file *os.File
+	file *bytes.Reader
 }
 
 type segment struct {
@@ -140,7 +141,7 @@ var (
 	jmpcode     byte = 0xe9
 )
 
-func readObj(f *os.File, reloc *CodeReloc, objsymmap map[string]objSym, pkgpath *string) error {
+func readObj(f *bytes.Reader, reloc *CodeReloc, objsymmap map[string]objSym, pkgpath *string) error {
 	if pkgpath == nil || *pkgpath == "" {
 		var defaultPkgPath = "main"
 		pkgpath = &defaultPkgPath
@@ -167,14 +168,41 @@ func readObj(f *os.File, reloc *CodeReloc, objsymmap map[string]objSym, pkgpath 
 	return nil
 }
 
+/*
 func ReadObj(f *os.File) (*CodeReloc, error) {
 	reloc := CodeReloc{SymMap: make(map[string]int), GCObjs: make(map[string]uintptr), FileMap: make(map[string]int)}
 	reloc.Mod.pclntable = append(reloc.Mod.pclntable, moduleHead...)
 	var objsymmap = make(map[string]objSym)
 	return &reloc, readObj(f, &reloc, objsymmap, nil)
 }
+*/
 
 func ReadObjs(files []string, pkgPath []string) (*CodeReloc, error) {
+	reloc := CodeReloc{SymMap: make(map[string]int), GCObjs: make(map[string]uintptr), FileMap: make(map[string]int)}
+	reloc.Mod.pclntable = append(reloc.Mod.pclntable, moduleHead...)
+	var objsymmap = make(map[string]objSym)
+	for i, file := range files {
+		// f, err := os.Open(file)
+		data, err := ioutil.ReadFile(file)
+		if err != nil {
+			return nil, err
+		}
+
+		f := bytes.NewReader(data)
+		// fmt.Println(f)
+		// fmt.Println(objsymmap)
+		// fmt.Println(i)
+		// defer f.Close()
+		err = readObj(f, &reloc, objsymmap, &(pkgPath[i]))
+		if err != nil {
+			return nil, err
+		}
+	}
+	return &reloc, nil
+}
+
+/*
+func ReadObjs1(files []string, pkgPath []string) (*CodeReloc, error) {
 	reloc := CodeReloc{SymMap: make(map[string]int), GCObjs: make(map[string]uintptr), FileMap: make(map[string]int)}
 	reloc.Mod.pclntable = append(reloc.Mod.pclntable, moduleHead...)
 	var objsymmap = make(map[string]objSym)
@@ -191,6 +219,7 @@ func ReadObjs(files []string, pkgPath []string) (*CodeReloc, error) {
 	}
 	return &reloc, nil
 }
+*/
 
 func addSymMap(symMap map[string]int, symArray *[]SymData, rsym *SymData) int {
 	var offset int
