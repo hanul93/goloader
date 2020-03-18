@@ -2,7 +2,7 @@ package goloader
 
 import (
 	"bytes"
-	"cmd/objfile/goobj"
+	goobj "github.com/hanul93/goloader/goobj"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -146,6 +146,7 @@ func readObj(f *bytes.Reader, reloc *CodeReloc, objsymmap map[string]objSym, pkg
 		var defaultPkgPath = "main"
 		pkgpath = &defaultPkgPath
 	}
+
 	obj, err := goobj.Parse(f, *pkgpath)
 	if err != nil {
 		return fmt.Errorf("read error: %v", err)

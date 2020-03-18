@@ -1,7 +1,7 @@
 package goloader
 
 import (
-	"cmd/objfile/goobj"
+	"github.com/hanul93/goloader/goobj"
 	"fmt"
 	"strings"
 	"unsafe"
